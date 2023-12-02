@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "baseUrl": ".",
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -23,8 +23,9 @@
     "paths": {
       "@/*": ["./*"],
       "src/*": ["./src/*"],
-      "components/*": ["./src/components/*"],
-      "views/*": ["./src/views/*"],
+      "public/*": ["./public/*"],
+      "components/*": ["./src/components/*", "./src/components/*/index.vue"],
+      "views/*": ["./src/views/*", "./src/views/*/index.vue"],
       "router/*": ["./src/router/*"],
       "assets/*": ["./src/assets/*"],
       "types/*": ["./src/types/*"],
