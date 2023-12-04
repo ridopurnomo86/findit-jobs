@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import JobCard from 'components/cards/JobCard.vue';
 import useFetch from 'composable/useFetch';
+import JobCardList from 'components/data-display/JobCardList.vue';
+import { onMounted } from 'vue';
 
-const { data } = useFetch({
+const {
+  data: jobs,
+  request,
+  isLoading,
+} = useFetch({
   path: '/search.json',
+  query: {
+    gl: 'uk',
+  },
 });
 
-console.log(data);
+onMounted(async () => {
+  await request();
+});
 </script>
 
 <template>
@@ -19,7 +29,8 @@ console.log(data);
           placeholder="Title, companies, expertise, or benefits"
           class="input-search fs-300 w-full border-radius-100"
         />
-        <button type="submit" class="input-button-search py-3 px-6 fs-300 border-radius-100">
+        <button type="submit"
+class="input-button-search py-3 px-6 fs-300 border-radius-100">
           Search
         </button>
       </div>
@@ -27,11 +38,14 @@ console.log(data);
     <div class="job-container mt-7 mb-6">
       <div>
         <div class="flex-container mb-6">
-          <input type="checkbox" name="full-time" id="full-time" class="checkbox" />
-          <label for="full-time" class="text-medium ml-3 checkbox-text">Full Time</label>
+          <input
+type="checkbox" name="full-time" id="full-time" class="checkbox" />
+          <label for="full-time"
+class="text-medium ml-3 checkbox-text">Full Time</label>
         </div>
         <div class="mb-5">
-          <label for="" class="text-bold label-text">Location</label>
+          <label for=""
+class="text-bold label-text">Location</label>
           <div class="input-container border-radius-100 mt-4">
             <span class="material-symbols-outlined icon">globe</span>
             <input
@@ -45,51 +59,41 @@ console.log(data);
           <ul>
             <li>
               <div class="flex-container mb-4">
-                <input type="radio" name="london" id="london" class="checkbox rounded-full" />
-                <label for="london" class="text-medium ml-3 checkbox-text">London</label>
+                <input
+type="radio" name="location" id="london" class="checkbox rounded-full" />
+                <label for="london"
+class="text-medium ml-3 checkbox-text">London</label>
               </div>
             </li>
             <li>
               <div class="flex-container mb-4">
-                <input type="radio" name="amsterdam" id="amsterdam" class="checkbox rounded-full" />
-                <label for="amsterdam" class="text-medium ml-3 checkbox-text">Amsterdam</label>
+                <input
+type="radio" name="location" id="amsterdam" class="checkbox rounded-full" />
+                <label for="amsterdam"
+class="text-medium ml-3 checkbox-text">Amsterdam</label>
               </div>
             </li>
             <li>
               <div class="flex-container mb-4">
-                <input type="radio" name="newyork" id="newyork" class="checkbox rounded-full" />
-                <label for="newyork" class="text-medium ml-3 checkbox-text">New York</label>
+                <input
+type="radio" name="location" id="newyork" class="checkbox rounded-full" />
+                <label for="newyork"
+class="text-medium ml-3 checkbox-text">New York</label>
               </div>
             </li>
             <li>
               <div class="flex-container mb-4">
-                <input type="radio" name="berlin" id="berlin" class="checkbox rounded-full" />
-                <label for="berlin" class="text-medium ml-3 checkbox-text">Berlin</label>
+                <input
+type="radio" name="location" id="berlin" class="checkbox rounded-full" />
+                <label for="berlin"
+class="text-medium ml-3 checkbox-text">Berlin</label>
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <div class="list-job-container">
-        <JobCard
-          :company-name="'Rusting'"
-          :img-url="'https://static.devitjobs.uk/logo-images/referment-logo.jpg'"
-          :jobs-name="'Front-End Software Engineer'"
-          :job-type="'Full Time'"
-        />
-        <JobCard
-          :company-name="'Rusting'"
-          :img-url="'https://static.devitjobs.uk/logo-images/referment-logo.jpg'"
-          :jobs-name="'Front-End Software Engineer'"
-          :job-type="'Full Time'"
-        />
-        <JobCard
-          :company-name="'Rusting'"
-          :img-url="'https://static.devitjobs.uk/logo-images/referment-logo.jpg'"
-          :jobs-name="'Front-End Software Engineer'"
-          :job-type="'Full Time'"
-        />
-      </div>
+      <JobCardList :jobs="jobs"
+:is-loading="isLoading" />
     </div>
   </main>
 </template>

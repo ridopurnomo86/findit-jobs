@@ -1,4 +1,4 @@
-import { ref, watchEffect } from 'vue';
+import { ref } from 'vue';
 import instance from '../helpers/axios';
 import axios from 'axios';
 
@@ -14,13 +14,11 @@ const { CancelToken } = axios;
 
 const useFetch = ({ path, method = 'GET', query }: useFetchParamsType) => {
   const data = ref<any>(null);
-  const isLoading = ref<boolean>(false);
+  const isLoading = ref<boolean>(true);
   const error = ref(null);
-  const { signal, abort } = new AbortController();
+  const { signal } = new AbortController();
 
   const request = async () => {
-    isLoading.value = true;
-
     try {
       const res = await instance(path, {
         method,
@@ -28,35 +26,29 @@ const useFetch = ({ path, method = 'GET', query }: useFetchParamsType) => {
         params: {
           ...query,
           api_key: import.meta.env.VITE_BASE_API_KEY,
-          q: 'Software Engineer, Frontend, Backend',
+          q: 'Engineer',
           engine: 'google_jobs',
           google_domain: 'google.com',
-        },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
+          hl: 'en',
         },
         cancelToken: CancelToken.source().token,
       });
 
-      if (res) {
-        isLoading.value = false;
-        data.value = res.data;
-      }
+      isLoading.value = false;
+      data.value = res.data;
+
+      return res;
     } catch (err: unknown) {
       if (err instanceof Error) {
         isLoading.value = false;
         (error.value as any) = err;
       }
     }
+
+    isLoading.value = false;
   };
 
-  watchEffect(async () => {
-    await request();
-    if (data.value) abort();
-  }, {});
-
-  return { data, isLoading };
+  return { data, isLoading, error, request };
 };
 
 export default useFetch;
