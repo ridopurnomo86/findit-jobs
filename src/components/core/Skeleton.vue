@@ -5,8 +5,7 @@ defineProps({
 </script>
 
 <template>
-  <span class="skeleton"
-:style="style">&zwnj;</span>
+  <span class="skeleton" :style="style">&zwnj;</span>
 </template>
 
 <style>

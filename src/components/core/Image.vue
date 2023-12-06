@@ -6,7 +6,7 @@ defineProps({
 
 <template>
   <div class="empty-image-container">
-    <p class="initial-text text-semibold fs-700">
+    <p class="initial-text text-semibold fs-600">
       {{ companyName.split('')[0].toUpperCase() }}
     </p>
   </div>
@@ -14,9 +14,6 @@ defineProps({
 
 <style scoped>
 .empty-image-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
   background-color: #f2f2f2;
   display: flex;
   align-items: center;

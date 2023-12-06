@@ -1,7 +1,55 @@
 <script setup lang="ts">
-import useFetch from 'composable/useFetch';
+import { onMounted, ref, watch } from 'vue';
 import JobCardList from 'components/data-display/JobCardList.vue';
-import { onMounted } from 'vue';
+import Pagination from 'components/Pagination.vue';
+import { useFetch } from 'composable/index';
+
+const FILTER_LOCATION: {
+  id: number;
+  name: string;
+  value: string;
+  isChecked?: boolean;
+  location_requested: string;
+}[] = [
+  {
+    id: 1,
+    name: 'London',
+    value: 'london',
+    isChecked: true,
+    location_requested: 'London, England, United Kingdom',
+  },
+  {
+    id: 2,
+    name: 'Amsterdam',
+    value: 'amsterdam',
+    location_requested: 'Amsterdam, North Holland, Netherlands',
+  },
+  {
+    id: 3,
+    name: 'New York',
+    value: 'newyork',
+    location_requested: 'New York, New York, United States',
+  },
+  {
+    id: 4,
+    name: 'Berlin',
+    value: 'berlin',
+    location_requested: 'Berlin, Germany',
+  },
+];
+
+const currentLocation = ref('london');
+const choosedLocation = ref(FILTER_LOCATION[0].location_requested);
+
+const inputSearch = ref('');
+
+const handleChooseLocation = (
+  e: Event,
+  item: { id: number; name: string; value: string; isChecked?: boolean; location_requested: string }
+) => {
+  currentLocation.value = (e.target as HTMLInputElement).value;
+  choosedLocation.value = item.location_requested;
+};
 
 const {
   data: jobs,
@@ -9,14 +57,30 @@ const {
   isLoading,
 } = useFetch({
   path: '/search.json',
-  query: {
-    gl: 'uk',
-  },
 });
 
 onMounted(async () => {
-  await request();
+  await request({
+    optionalQuery: {
+      location: choosedLocation.value,
+    },
+  });
 });
+
+watch(
+  choosedLocation,
+  async (after) => {
+    if (after)
+      await request({
+        optionalQuery: {
+          location: choosedLocation.value,
+        },
+      });
+  },
+  {
+    deep: true,
+  }
+);
 </script>
 
 <template>
@@ -26,11 +90,12 @@ onMounted(async () => {
         <span class="material-symbols-outlined icon">work</span>
         <input
           type="text"
+          id="search"
+          name="search"
           placeholder="Title, companies, expertise, or benefits"
           class="input-search fs-300 w-full border-radius-100"
         />
-        <button type="submit"
-class="input-button-search py-3 px-6 fs-300 border-radius-100">
+        <button type="submit" class="input-button-search py-3 px-6 fs-300 border-radius-100">
           Search
         </button>
       </div>
@@ -38,67 +103,54 @@ class="input-button-search py-3 px-6 fs-300 border-radius-100">
     <div class="job-container mt-7 mb-6">
       <div>
         <div class="flex-container mb-6">
-          <input
-type="checkbox" name="full-time" id="full-time" class="checkbox" />
-          <label for="full-time"
-class="text-medium ml-3 checkbox-text">Full Time</label>
+          <input type="checkbox" name="full-time" id="full-time" class="checkbox" checked />
+          <label for="full-time" class="text-medium ml-3 checkbox-text">Full Time</label>
         </div>
         <div class="mb-5">
-          <label for=""
-class="text-bold label-text">Location</label>
+          <label for="location" class="text-bold label-text">Location</label>
           <div class="input-container border-radius-100 mt-4">
             <span class="material-symbols-outlined icon">globe</span>
             <input
               type="text"
+              id="location"
               placeholder="City, state, zip code or country"
+              name="location"
+              v-model="inputSearch"
               class="input-search fs-300 w-full border-radius-100 shadow"
             />
           </div>
         </div>
         <div>
           <ul>
-            <li>
+            <li v-for="location in FILTER_LOCATION" :key="location.id">
               <div class="flex-container mb-4">
                 <input
-type="radio" name="location" id="london" class="checkbox rounded-full" />
-                <label for="london"
-class="text-medium ml-3 checkbox-text">London</label>
-              </div>
-            </li>
-            <li>
-              <div class="flex-container mb-4">
-                <input
-type="radio" name="location" id="amsterdam" class="checkbox rounded-full" />
-                <label for="amsterdam"
-class="text-medium ml-3 checkbox-text">Amsterdam</label>
-              </div>
-            </li>
-            <li>
-              <div class="flex-container mb-4">
-                <input
-type="radio" name="location" id="newyork" class="checkbox rounded-full" />
-                <label for="newyork"
-class="text-medium ml-3 checkbox-text">New York</label>
-              </div>
-            </li>
-            <li>
-              <div class="flex-container mb-4">
-                <input
-type="radio" name="location" id="berlin" class="checkbox rounded-full" />
-                <label for="berlin"
-class="text-medium ml-3 checkbox-text">Berlin</label>
+                  type="radio"
+                  :name="location.value"
+                  :id="location.value"
+                  :value="location.value"
+                  class="checkbox rounded-full"
+                  :checked="location.isChecked"
+                  v-model="currentLocation"
+                  @input="(e: Event) => handleChooseLocation(e, location)"
+                />
+                <label :for="location.value" class="text-medium ml-3 checkbox-text">
+                  {{ location.name }}
+                </label>
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <JobCardList :jobs="jobs"
-:is-loading="isLoading" />
+      <div>
+        <JobCardList :jobs="jobs" :is-loading="isLoading" />
+        <Pagination />
+      </div>
     </div>
   </main>
 </template>
 
-<style>
+<style scoped>
 .shadow {
   box-shadow: 0px 2px 4px 0px #0000000d;
 }
@@ -106,12 +158,6 @@ class="text-medium ml-3 checkbox-text">Berlin</label>
 .flex-container {
   display: flex;
   align-items: center;
-}
-
-.image-background {
-  object-fit: cover;
-  aspect-ratio: 6;
-  border-radius: 8px;
 }
 
 .banner-search-container {
@@ -168,12 +214,7 @@ class="text-medium ml-3 checkbox-text">Berlin</label>
   gap: var(--size-600);
 }
 
-.list-job-container {
-  display: grid;
-  gap: 2rem;
-}
-
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 830px) {
   .job-container {
     grid-template-columns: auto;
   }

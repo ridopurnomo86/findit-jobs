@@ -17,5 +17,11 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'consistent-return': 'off',
     'prettier/prettier': 'error',
+    'vue/multi-word-component-names': [
+      'off',
+      {
+        ignores: [],
+      },
+    ],
   },
 };

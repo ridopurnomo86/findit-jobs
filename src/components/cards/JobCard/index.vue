@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Image from '../../core/Image.vue';
+import Image from 'components/core/Image.vue';
 
 defineProps({
   imgUrl: { type: String, required: true },
@@ -22,8 +22,7 @@ defineProps({
             :src="imgUrl"
             :alt="`picture ${companyName}`"
           />
-          <Image v-else
-:company-name="companyName" />
+          <Image v-else class="company-image border-radius-100" :company-name="companyName" />
         </div>
         <div class="info-container ml-4">
           <p class="company-text text-bold fs-300 mb-2">
@@ -40,15 +39,15 @@ defineProps({
         </div>
       </div>
       <div class="flex-container align-self">
-        <div class="flex-container mr-4">
+        <div class="flex-container items-center mr-4">
           <span class="material-symbols-outlined icon mr-2">public</span>
-          <p class="country-text text-medium fs-300">
+          <p class="country-text text-medium no-wrap fs-300">
             {{ countryName }}
           </p>
         </div>
-        <div class="flex-container">
+        <div class="flex-container items-center">
           <span class="material-symbols-outlined icon mr-2">schedule</span>
-          <p class="recent-date-text text-medium fs-300">
+          <p class="recent-date-text text-medium no-wrap fs-300">
             {{ recentDate }}
           </p>
         </div>
@@ -57,9 +56,17 @@ defineProps({
   </article>
 </template>
 
-<style>
+<style scoped>
 .icon {
   color: var(--neutral-100);
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.items-center {
+  align-items: center;
 }
 
 .align-self {
@@ -71,6 +78,16 @@ defineProps({
   justify-content: space-between;
 }
 
+@media screen and (max-width: 700px) {
+  .space-between-container {
+    flex-direction: column;
+  }
+
+  .align-self {
+    margin-top: 16px;
+  }
+}
+
 .job-card-container {
   background-color: #ffffff;
   cursor: pointer;
@@ -78,13 +95,15 @@ defineProps({
 }
 
 .image-container {
-  width: 90px;
-  height: 90px;
+  width: 50px;
+  height: 50px;
+  align-self: center;
 }
 
 .company-image {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
+  object-fit: contain;
 }
 
 .flex-container {

@@ -1,14 +1,7 @@
 import { ref } from 'vue';
-import instance from '../helpers/axios';
+import instance from 'helpers/axios';
 import axios from 'axios';
-
-type useFetchParamsType = {
-  path: string;
-  method?: 'GET' | 'POST';
-  query?: {
-    [key: string]: string;
-  };
-};
+import { useFetchParamsType } from './types';
 
 const { CancelToken } = axios;
 
@@ -18,13 +11,16 @@ const useFetch = ({ path, method = 'GET', query }: useFetchParamsType) => {
   const error = ref(null);
   const { signal } = new AbortController();
 
-  const request = async () => {
+  const request = async ({ optionalQuery }: { optionalQuery?: any }) => {
+    isLoading.value = true;
+
     try {
       const res = await instance(path, {
         method,
         signal,
         params: {
           ...query,
+          ...optionalQuery,
           api_key: import.meta.env.VITE_BASE_API_KEY,
           q: 'Engineer',
           engine: 'google_jobs',
@@ -34,18 +30,16 @@ const useFetch = ({ path, method = 'GET', query }: useFetchParamsType) => {
         cancelToken: CancelToken.source().token,
       });
 
-      isLoading.value = false;
       data.value = res.data;
 
       return res;
     } catch (err: unknown) {
       if (err instanceof Error) {
-        isLoading.value = false;
         (error.value as any) = err;
       }
+    } finally {
+      isLoading.value = false;
     }
-
-    isLoading.value = false;
   };
 
   return { data, isLoading, error, request };
