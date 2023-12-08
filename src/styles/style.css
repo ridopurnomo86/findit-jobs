@@ -65,9 +65,15 @@
   box-sizing: border-box;
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
   background-color: var(--main-bg);
   min-height: 100vh;
+  margin-bottom: 128px;
 }
 
 .container {

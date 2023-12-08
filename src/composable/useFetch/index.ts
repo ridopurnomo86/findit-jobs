@@ -22,8 +22,6 @@ const useFetch = ({ path, method = 'GET', query }: useFetchParamsType) => {
           ...query,
           ...optionalQuery,
           api_key: import.meta.env.VITE_BASE_API_KEY,
-          q: 'Engineer',
-          engine: 'google_jobs',
           google_domain: 'google.com',
           hl: 'en',
         },

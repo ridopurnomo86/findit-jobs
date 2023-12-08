@@ -21,6 +21,27 @@ const keys = [...Array(6).keys()];
         :img-url="job.thumbnail || ''"
         :job-type="job.detected_extensions?.schedule_type"
         :country-name="job.location"
+        :on-click="
+          async () => {
+            const company_name = job.company_name.toLowerCase();
+            const title = [...job.title.split(' '), company_name].join('-').toLowerCase();
+
+            await $router.push({
+              path: `/job/${title}`,
+              state: {
+                company_name: job?.company_name,
+                description: job?.description,
+                job_id: job?.job_id,
+                location: job?.location,
+                title: job?.title,
+                via: job?.via,
+                job_type: job.detected_extensions?.schedule_type,
+                date: job.detected_extensions?.posted_at || 'Time Unknown',
+                thumbnail: job?.thumbnail,
+              },
+            });
+          }
+        "
         :recent-date="job.detected_extensions?.posted_at || 'Time Unknown'"
       />
     </div>

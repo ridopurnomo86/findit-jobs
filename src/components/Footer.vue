@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer-container py-4">
+  <footer class="footer-container mt-4 py-6">
     <p class="footer-text fs-300 text-medium">
       created by
       <a href="https://github.com/ridopurnomo86" target="_blank">
@@ -14,6 +14,11 @@
 a {
   text-decoration: none;
   color: var(--neutral-100);
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 .footer-container {
   display: flex;

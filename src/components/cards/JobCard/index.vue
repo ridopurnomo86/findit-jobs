@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import Image from 'components/core/Image.vue';
 
-defineProps({
-  imgUrl: { type: String, required: true },
-  companyName: { type: String, required: true },
-  jobsName: { type: String, required: true },
-  jobType: { type: String, required: true },
-  recentDate: { type: String, required: true },
-  countryName: { type: String, required: true },
-});
+defineProps<{
+  imgUrl: string;
+  companyName: string;
+  jobsName: string;
+  jobType: string;
+  recentDate: string;
+  countryName: string;
+  onClick: () => void;
+}>();
 </script>
 
 <template>
-  <article class="job-card-container p-3 border-radius-100">
+  <article class="job-card-container p-3 border-radius-100" @click="onClick">
     <div class="space-between-container">
       <div class="flex-container">
         <div class="image-container">

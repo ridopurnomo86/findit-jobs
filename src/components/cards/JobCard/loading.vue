@@ -30,13 +30,13 @@ import Skeleton from 'components/core/Skeleton.vue';
   justify-content: center;
 }
 .image-container {
-  width: 90px;
-  height: 90px;
+  width: 50px;
+  height: 50px;
 }
 
 .image-loading {
-  width: 90px;
-  height: 90px;
+  width: 100%;
+  height: 100%;
 }
 
 .company-text-loading {

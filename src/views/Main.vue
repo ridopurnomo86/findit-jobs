@@ -38,10 +38,11 @@ const FILTER_LOCATION: {
   },
 ];
 
-const currentLocation = ref('london');
-const choosedLocation = ref(FILTER_LOCATION[0].location_requested);
+const currentLocation = ref<string>('london');
+const choosedLocation = ref<string>(FILTER_LOCATION[0].location_requested);
 
-const inputSearch = ref('');
+const locationSearch = ref<string>('');
+const jobSearch = ref<string>('');
 
 const handleChooseLocation = (
   e: Event,
@@ -51,12 +52,28 @@ const handleChooseLocation = (
   choosedLocation.value = item.location_requested;
 };
 
+const handleSearchJob = async () => {
+  await request({
+    optionalQuery: {
+      q: jobSearch.value,
+    },
+  });
+
+  jobSearch.value = '';
+  choosedLocation.value = '';
+  currentLocation.value = '';
+};
+
 const {
   data: jobs,
   request,
   isLoading,
 } = useFetch({
   path: '/search.json',
+  query: {
+    q: 'Engineer',
+    engine: 'google_jobs',
+  },
 });
 
 onMounted(async () => {
@@ -94,8 +111,13 @@ watch(
           name="search"
           placeholder="Title, companies, expertise, or benefits"
           class="input-search fs-300 w-full border-radius-100"
+          v-model="jobSearch"
         />
-        <button type="submit" class="input-button-search py-3 px-6 fs-300 border-radius-100">
+        <button
+          @click="handleSearchJob"
+          type="button"
+          class="input-button-search py-3 px-6 fs-300 border-radius-100"
+        >
           Search
         </button>
       </div>
@@ -115,7 +137,7 @@ watch(
               id="location"
               placeholder="City, state, zip code or country"
               name="location"
-              v-model="inputSearch"
+              v-model="locationSearch"
               class="input-search fs-300 w-full border-radius-100 shadow"
             />
           </div>
