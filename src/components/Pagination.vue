@@ -1,24 +1,38 @@
+<script setup lang="ts">
+defineProps<{
+  onPrevNavigation: () => void;
+  pages: number[];
+  activePage: number;
+  onNextNavigation: () => void;
+}>();
+</script>
+
 <template>
   <div class="pagination-container mt-6">
-    <a href="#" class="pagination-button border-radius-100 p-3">
+    <button type="button" class="pagination-button border-radius-100 p-3" @click="onPrevNavigation">
       <span class="material-symbols-outlined">navigate_before</span>
-    </a>
-    <a href="#" class="pagination-button border-radius-100 p-3">
-      <p class="pagination-text fs-400">1</p>
-    </a>
-    <a href="#" class="pagination-button border-radius-100 p-3">
-      <p class="pagination-text fs-400">2</p>
-    </a>
-    <a href="#" class="pagination-button border-radius-100 p-3">
-      <p class="pagination-text fs-400">3</p>
-    </a>
-    <a href="#" class="pagination-button border-radius-100 p-3">
+    </button>
+    <router-link
+      v-for="page in pages"
+      :key="page"
+      :to="{ path: '/', query: { page } }"
+      class="pagination-button border-radius-100 p-3"
+      :class="{
+        active: activePage === page,
+      }"
+    >
+      <p class="pagination-text fs-400">{{ page }}</p>
+    </router-link>
+    <button type="button" class="pagination-button border-radius-100 p-3" @click="onNextNavigation">
       <span class="material-symbols-outlined">navigate_next</span>
-    </a>
+    </button>
   </div>
 </template>
 
 <style scoped>
+button {
+  cursor: pointer;
+}
 .pagination-container {
   display: flex;
   flex-wrap: wrap;
@@ -39,6 +53,9 @@
   color: white;
   border: 1px solid transparent;
 }
+.pagination-button:hover > p {
+  color: white;
+}
 .active {
   background-color: transparent;
   color: var(--secondary-600);
@@ -47,7 +64,6 @@
 .active > p {
   color: var(--secondary-600);
 }
-
 .pagination-text {
   color: var(--neutral-100);
   width: 24px;

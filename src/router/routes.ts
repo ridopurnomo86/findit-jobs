@@ -1,5 +1,5 @@
 import Main from 'views/Main.vue';
-import JobDetail from 'views/JobDetail.vue';
+import JobDetail from 'views/JobDetail/index.vue';
 
 const routes = [
   {

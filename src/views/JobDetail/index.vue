@@ -2,10 +2,15 @@
 import Image from 'components/core/Image.vue';
 import { useFetch } from 'composable/index';
 import { onMounted } from 'vue';
+import JobDetailLoading from './loading.vue';
 
 const job = window.history.state;
 
-const { data: jobDetail, request } = useFetch({
+const {
+  data: jobDetail,
+  request,
+  isLoading,
+} = useFetch({
   path: '/search.json',
   query: {
     engine: 'google_jobs_listing',
@@ -19,7 +24,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main class="container grid-container">
+  <div v-if="isLoading">
+    <JobDetailLoading />
+  </div>
+  <main v-else class="container grid-container">
     <aside>
       <a @click="$router.go(-1)" class="flex-container back-search-text fs-300 text-medium">
         <span class="material-symbols-outlined back-search-text icon mr-2">keyboard_backspace</span>
@@ -29,8 +37,16 @@ onMounted(async () => {
         <h1 class="text-bold title-text mb-4">HOW TO APPLY</h1>
         <p class="fs-300 text-medium apply-text">
           Please email a copy of your resume and online portfolio to view
-          <a :href="jobDetail.ratings[0].link" target="_blank">
-            <span class="recipient-text">{{ jobDetail.ratings[0].source }}</span>
+          <a
+            v-for="(applyOption, idx) in jobDetail.apply_options"
+            target="_blank"
+            :href="applyOption.link"
+            :key="idx"
+          >
+            <span class="recipient-text">
+              {{ applyOption.title
+              }}{{ idx + 1 === jobDetail.apply_options.length ? '.' : ',' }}&nbsp;
+            </span>
           </a>
         </p>
       </div>

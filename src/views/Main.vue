@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import JobCardList from 'components/data-display/JobCardList.vue';
 import Pagination from 'components/Pagination.vue';
 import { useFetch } from 'composable/index';
+import { useRouter } from 'vue-router';
 
 const FILTER_LOCATION: {
   id: number;
@@ -38,11 +39,41 @@ const FILTER_LOCATION: {
   },
 ];
 
+const router = useRouter();
 const currentLocation = ref<string>('london');
 const choosedLocation = ref<string>(FILTER_LOCATION[0].location_requested);
 
 const locationSearch = ref<string>('');
 const jobSearch = ref<string>('');
+
+const pages = ref([1, 2, 3]);
+const activePage = ref(1);
+
+const handlePrevNavigation = async () => {
+  if (activePage.value > 1) {
+    activePage.value = activePage.value - 1;
+    await request({
+      optionalQuery: {
+        start: activePage.value * 10 - 10,
+        location: choosedLocation.value,
+      },
+    });
+  }
+  return null;
+};
+
+const handleNextNavigation = async () => {
+  if (activePage.value < 3) {
+    activePage.value = activePage.value + 1;
+    await request({
+      optionalQuery: {
+        start: activePage.value * 10 - 10,
+        location: choosedLocation.value,
+      },
+    });
+  }
+  return null;
+};
 
 const handleChooseLocation = (
   e: Event,
@@ -98,6 +129,12 @@ watch(
     deep: true,
   }
 );
+
+watch([activePage], async (after) => {
+  if (after) {
+    await router.push({ path: '/', query: { page: after }, replace: true });
+  }
+});
 </script>
 
 <template>
@@ -166,7 +203,12 @@ watch(
       </div>
       <div>
         <JobCardList :jobs="jobs" :is-loading="isLoading" />
-        <Pagination />
+        <Pagination
+          :active-page="activePage"
+          :on-next-navigation="handleNextNavigation"
+          :on-prev-navigation="handlePrevNavigation"
+          :pages="pages"
+        />
       </div>
     </div>
   </main>
