@@ -75,6 +75,16 @@ const handleNextNavigation = async () => {
   return null;
 };
 
+const handleSelecteNavigation = async (page: number) => {
+  activePage.value = page;
+  await request({
+    optionalQuery: {
+      start: page * 10 - 10,
+      location: choosedLocation.value,
+    },
+  });
+};
+
 const handleChooseLocation = (
   e: Event,
   item: { id: number; name: string; value: string; isChecked?: boolean; location_requested: string }
@@ -208,6 +218,7 @@ watch([activePage], async (after) => {
           :on-next-navigation="handleNextNavigation"
           :on-prev-navigation="handlePrevNavigation"
           :pages="pages"
+          :on-selected-navigation="handleSelecteNavigation"
         />
       </div>
     </div>

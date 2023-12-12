@@ -4,6 +4,8 @@ defineProps<{
   pages: number[];
   activePage: number;
   onNextNavigation: () => void;
+  // eslint-disable-next-line no-unused-vars
+  onSelectedNavigation: (page: number) => void;
 }>();
 </script>
 
@@ -12,17 +14,17 @@ defineProps<{
     <button type="button" class="pagination-button border-radius-100 p-3" @click="onPrevNavigation">
       <span class="material-symbols-outlined">navigate_before</span>
     </button>
-    <router-link
+    <button
       v-for="page in pages"
       :key="page"
-      :to="{ path: '/', query: { page } }"
+      @click="() => onSelectedNavigation(page)"
       class="pagination-button border-radius-100 p-3"
       :class="{
         active: activePage === page,
       }"
     >
       <p class="pagination-text fs-400">{{ page }}</p>
-    </router-link>
+    </button>
     <button type="button" class="pagination-button border-radius-100 p-3" @click="onNextNavigation">
       <span class="material-symbols-outlined">navigate_next</span>
     </button>
